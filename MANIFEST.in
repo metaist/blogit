@@ -1,0 +1,5 @@
+#recursive-include docs/_build/html *
+#prune docs/_build/html/.doctrees/
+#exclude docs/_build/html/.buildinfo
+include LICENSE.markdown
+include README.markdown

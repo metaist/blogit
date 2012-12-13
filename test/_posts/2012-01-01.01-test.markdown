@@ -1,0 +1,27 @@
+---
+title: foo
+video: bar
+...
+Site attributes:
+
+  - site.url: {site.url}
+  - site.blog_url: {site.blog_url}
+  - site.img_url: {site.img_url}
+
+Default attributes:
+
+  - post.layout: {post.layout}
+  - post.author: {post.author}
+
+Computed attributes:
+
+  - post.url:  {post.url}
+  - post.warn_rss:  {post.warn_rss}
+
+Overriden attribute:
+
+  - post.title: {post.title}
+
+Ad-hoc attribute:
+
+  - post.video: {post.video}

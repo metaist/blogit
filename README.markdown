@@ -11,7 +11,7 @@ Licensed under the [MIT License][osi-mit].
 
 [ci-image]: https://secure.travis-ci.org/metaist/blogit.png
 [ci-status]: http://travis-ci.org/metaist/blogit
-[hyde]:
-[jekyll]:
+[hyde]: https://github.com/lakshmivyas/hyde
+[jekyll]: https://github.com/mojombo/jekyll
 [osi-mit]: http://opensource.org/licenses/MIT
 [semver]: http://semver.org/

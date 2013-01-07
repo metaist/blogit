@@ -143,6 +143,18 @@ class Namespace(object):
         """
         self.__dict__[key] = value
 
+    def __delitem__(self, key):
+        """Delete the attribute from the namespace.
+
+        >>> ns = Namespace(a=1)
+        >>> ns.a == 1
+        True
+        >>> del ns['a']
+        >>> ns.a is None
+        True
+        """
+        del self.__dict__[key]
+
     def __iter__(self):
         """Return an iterator for this namespace.
 

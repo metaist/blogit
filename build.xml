@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="blogit" default="all">
   <property name="project.package" value="blogit" />
+  <property name="project.utils" value="metautils" />
 
   <!-- Executables -->
   <condition property="bin.ext" value=".bat" else="">
@@ -49,7 +50,7 @@
     <exec executable="${bin.nose}" failonerror="true">
       <arg value="--with-doctest" />
       <arg value="--with-coverage"/>
-      <arg value="--cover-package=${project.package}"/>
+      <arg value="--cover-package=${project.package},${project.utils}"/>
     </exec>
   </target>
 
@@ -62,6 +63,7 @@
   <target name="test-pylint" description="run pylint">
     <exec executable="${bin.pylint}" failonerror="true">
       <arg value="${project.package}" />
+      <arg value="${project.utils}" />
       <arg value="--rcfile=.pylint.ini" />
     </exec>
   </target>

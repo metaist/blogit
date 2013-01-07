@@ -1,74 +1,70 @@
 #!/usr/bin/python
 # coding: utf-8
 
+from datetime import datetime
 import os
-import logging
 import unittest
 
-from blogit import Site, Post, metaformat
+from metautils import Namespace, interpolate
+import blogit
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-CONFIG = metaformat({
-    'url': '//localhost',
-    'blog_dir': TEST_DIR + '/blog',
-    'blog_url': '{url}/blog',
-    'img_dir': TEST_DIR + '/static/img',
-    'img_url': '{url}/static/img'
-})
 
 
 class TestPost(unittest.TestCase):
     def setUp(self):
-        """Define the global site."""
-        self.site = Site(**CONFIG)
+        """Setup configuration."""
+        self.config = Namespace(interpolate({
+            'url': '//localhost',
+            'blog_url': '{url}/blog',
+            'img_url': '{url}/static/img',
+            'img_dir': os.path.join(TEST_DIR, 'static', 'img')
+        }))
 
     def test_init(self):
         """Expected to create post."""
-        test = Post(self.site)
+        test = blogit.Post('')
         self.assertTrue(test is not None)
 
     def test_content(self):
-        """Expected to parse markdown."""
-        markd = '{post.url}'
-        metadata = {'year': '2012', 'month': '01', 'day': '01', 'stub': 'test'}
-        test = Post(self.site, defaults=metadata)
-        test.render(markd)
+        """Expected to parse string content."""
+        lines = ['tags: ~', '...',
+                 '${site.url}', '<!--more-->', '${post.url}']
+        txt = '\n'.join(lines)
 
-        expected = '<p>//localhost/blog/2012/01/test.html</p>'
-        self.assertEqual(test.html, expected)
+        meta = Namespace(year=2012, month=1, day=1, idx='', stub='test')
+        test = blogit.Post(content=txt, config=self.config, defaults=meta)
 
-    def test_bad_content(self):
-        """Expected to fail to parse markdown."""
-        markd = '{post.xurl}'
-        metadata = {'year': '2012', 'month': '01', 'day': '01', 'stub': 'test'}
-        test = Post(self.site, defaults=metadata)
+        expected = []
+        self.assertEqual(test.tags, expected)
 
-        logging.disable(logging.CRITICAL)
-        test.render(markd)
-        logging.disable(logging.NOTSET)
+        expected = '\n' + '\n'.join(lines[2:])
+        self.assertEqual(test.markdown, expected)
 
-        expected = ''
-        self.assertEqual(test.html, expected)
+        expected = '\n'.join([
+            '<p>' + self.config.url, blogit.REPLACE_MORE,
+            blogit.FORMAT_POST_URL.format(self.config.blog_url, meta) + '</p>'
+        ])
+        self.assertEqual(test.get_html(), expected)
 
-    def test_path(self):
-        """Expected to parse basic post."""
-        path = os.path.join(TEST_DIR, '_posts', '2012-01-01.01-test.markdown')
-        test = Post(self.site, path=path)
+        expected = '<p>' + self.config.url + '</p>'
+        self.assertEqual(test.get_summary(), expected)
+
+        self.assertTrue(test.is_rss_safe())
         self.assertFalse(test.is_future())
-        self.assertTrue(test.is_updated())
+        self.assertFalse(test.is_updated())
 
         expected = 'Sunday, January 01, 2012'
         self.assertEqual(test.get_published(), expected)
+        self.assertEqual(test.get_updated(), expected)
+
+        test.updated = datetime(year=meta.year, month=meta.month,
+                                day=meta.day + 1)
         self.assertNotEqual(test.get_updated(), expected)
 
-    def test_invalid_path(self):
-        """Expected to return empty post."""
-        path = os.path.join(TEST_DIR, '_posts', 'badregex')
-        test = Post(self.site, path=path)
-        self.assertEqual(test.html, '')
-        self.assertIsNone(test.get_published())
-        self.assertIsNone(test.get_updated())
+    def test_load(self):
+        """Expected to load post from file."""
+        path = os.path.join(TEST_DIR, '_posts', '2012-01-01.01-test.markdown')
+        test = blogit.Post(path, config=self.config)
 
-        path = os.path.join(TEST_DIR, '_posts', '2012-01-01.01-nop.markdown')
-        test = Post(self.site, path=path)
-        self.assertEqual(test.html, '')
+        self.assertNotEqual(test.get_html(), '')

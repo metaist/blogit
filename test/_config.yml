@@ -1,0 +1,18 @@
+# Blogit Configuration File
+
+default:
+  url: //localhost
+  blog_url: '{url}/blog'
+  img_url: '{url}/static/img'
+
+  # Directories
+  root_dir: test
+  blog_dir: '{root_dir}/blog'
+  img_dir: '{root_dir}/static/img'
+  layouts_dir: '{root_dir}/_layout'
+  posts_dir: '{root_dir}/_posts'
+  temp_dir: '{root_dir}/_tmp'
+
+  # Post defaults:
+  default_layout: post
+  default_author: Anonymous

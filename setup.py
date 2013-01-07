@@ -14,7 +14,7 @@ setup(
     download_url='https://github.com/metaist/blogit',
     description=blogit.__doc__.split('\n')[0],
     long_description=blogit.__doc__,
-    py_modules=['blogit'],
+    py_modules=['metautils', 'blogit'],
     keywords='static blog generator',
     license=blogit.__license__,
     classifiers=[

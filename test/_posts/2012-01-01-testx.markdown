@@ -1,0 +1,8 @@
+---
+title: No Stub
+tags: [math, science]
+video: bar
+...
+Ad-hoc attribute:
+
+  - post.video: ${post.video}
